@@ -1,14 +1,18 @@
 // Constants.
 const appName = 'Dumb Idle Game',
-    appVersion = '0.0.1',
+    appVersion = '0.0.2',
     appBuild = '2022-09-03',
     debug = true;
 
 // Variables.
-let clicks = 0,
+let clicks,
     btnClick = document.querySelector('#btnClick'),
+    btnSave = document.querySelector('#btnSave'),
+    btnReset = document.querySelector('#btnReset'),
     divClicks = document.querySelector('#divClicks'),
-    title = document.querySelector('#title');
+    title = document.querySelector('#title'),
+    localStorageSaveInterval = window.setInterval(saveLocalStorage, 30 * 1000);
+
 
 // Event listeners --------------------------------------------------------------------------------
 
@@ -17,6 +21,19 @@ btnClick.addEventListener('click', (event) => {
     clicks++
 
     updateDivClicks()
+});
+
+btnSave.addEventListener('click', (event) => {
+    saveLocalStorage()
+});
+
+btnReset.addEventListener('click', (event) => {
+    if (confirm("Reset? Are you sure?")) {
+        clicks = 0
+        saveLocalStorage()
+        console.log('Clicks reset.')
+        updateDivClicks()
+    }
 });
 
 // Functions --------------------------------------------------------------------------------------
@@ -45,7 +62,21 @@ function init() {
     console.log('Welcome to ' + getVersion());
 
     updateTitle()
+
+    // Get status from local storage, reset if can't.
+    clicks = +window.localStorage.getItem('clicks');
+    if (typeof (clicks) != 'number') {
+        clicks = 0
+    }
+
     updateDivClicks()
+}
+
+// Save to local storage.
+function saveLocalStorage() {
+    window.localStorage.setItem('clicks', clicks);
+
+    console.log('Saved to local storage.')
 }
 
 // Code to run on startup -------------------------------------------------------------------------
